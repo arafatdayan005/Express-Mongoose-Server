@@ -156,6 +156,40 @@ const getOrders = async (req: Request, res: Response) => {
   }
 };
 
+const getTotalPrice = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const result = await UserServices.getOrderSumByIDFromDB(Number(userId));
+
+    const orderArray = result?.orders;
+    const totalSum: number[] | undefined = orderArray?.map(
+      (item) => item.price * item.quantity,
+    );
+
+    let totalPrice: number = 0;
+    totalSum?.forEach((element) => {
+      if (totalSum) {
+        totalPrice += element;
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Total price calculated successfully!',
+      data: { totalPrice: totalPrice.toFixed(2) },
+    });
+  } catch (error) {
+    res.status(404).json({
+      success: false,
+      message: 'Could not calculate total price',
+      error: {
+        code: 404,
+        description: 'Could not calculate total price',
+      },
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
   getAllUser,
@@ -164,4 +198,5 @@ export const UserControllers = {
   deleteUser,
   addOrders,
   getOrders,
+  getTotalPrice,
 };

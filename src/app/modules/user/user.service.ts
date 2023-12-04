@@ -39,6 +39,11 @@ const getOrderByIDFromDB = async (userId: number) => {
   return result;
 };
 
+const getOrderSumByIDFromDB = async (userId: number) => {
+  const result = await UserModel.findOne({ userId }, { orders: 1, _id: 0 });
+  return result;
+};
+
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
@@ -47,4 +52,5 @@ export const UserServices = {
   deleteUserFromDB,
   addOrdersToUser,
   getOrderByIDFromDB,
+  getOrderSumByIDFromDB,
 };
