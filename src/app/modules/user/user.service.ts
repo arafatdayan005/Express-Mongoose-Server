@@ -34,6 +34,11 @@ const addOrdersToUser = async (userId: number, orders: Orders) => {
   return result;
 };
 
+const getOrderByIDFromDB = async (userId: number) => {
+  const result = await UserModel.findOne({ userId }, { orders: 1, _id: 0 });
+  return result;
+};
+
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
@@ -41,4 +46,5 @@ export const UserServices = {
   updateUserInfo,
   deleteUserFromDB,
   addOrdersToUser,
+  getOrderByIDFromDB,
 };

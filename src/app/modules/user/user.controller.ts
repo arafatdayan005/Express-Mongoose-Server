@@ -134,6 +134,28 @@ const addOrders = async (req: Request, res: Response) => {
   }
 };
 
+const getOrders = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const result = await UserServices.getOrderByIDFromDB(Number(userId));
+
+    res.status(200).json({
+      success: true,
+      message: 'Order fetched successfully!',
+      data: result,
+    });
+  } catch (error) {
+    res.status(404).json({
+      success: false,
+      message: 'Could not fetch order',
+      error: {
+        code: 404,
+        description: 'Could not fetch order',
+      },
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
   getAllUser,
@@ -141,4 +163,5 @@ export const UserControllers = {
   updateUser,
   deleteUser,
   addOrders,
+  getOrders,
 };
