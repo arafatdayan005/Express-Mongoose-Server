@@ -1,5 +1,5 @@
 import { UserModel } from '../user.model';
-import { User } from './user.interface';
+import { User, Orders } from './user.interface';
 
 const createUserIntoDB = async (user: User) => {
   const result = await UserModel.create(user);
@@ -26,10 +26,19 @@ const deleteUserFromDB = async (userId: number) => {
   return result;
 };
 
+const addOrdersToUser = async (userId: number, orders: Orders) => {
+  const result = await UserModel.updateOne(
+    { userId },
+    { $push: { orders: orders } },
+  );
+  return result;
+};
+
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
   getUserByIDFromDB,
   updateUserInfo,
   deleteUserFromDB,
+  addOrdersToUser,
 };

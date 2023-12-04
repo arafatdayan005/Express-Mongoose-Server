@@ -111,10 +111,34 @@ const deleteUser = async (req: Request, res: Response) => {
   }
 };
 
+const addOrders = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const order = req.body;
+    await UserServices.addOrdersToUser(Number(userId), order);
+
+    res.status(200).json({
+      success: true,
+      message: 'Order created successfully!',
+      data: null,
+    });
+  } catch (error) {
+    res.status(404).json({
+      success: false,
+      message: 'Could not create an order',
+      error: {
+        code: 404,
+        description: 'Could not create an order',
+      },
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
   getAllUser,
   getSingleUser,
   updateUser,
   deleteUser,
+  addOrders,
 };
