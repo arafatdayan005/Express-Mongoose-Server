@@ -1,8 +1,11 @@
 import { UserModel } from '../user.model';
 import { User, Orders } from './user.interface';
+import bcrypt from "bcrypt";
 
 const createUserIntoDB = async (user: User) => {
-  const result = await UserModel.create(user);
+  const hashedPassword = await bcrypt.hash(user.password, 10);
+  const newUser = { ...user, password: hashedPassword };
+  const result = await UserModel.create(newUser);
   return result;
 };
 
