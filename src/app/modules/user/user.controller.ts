@@ -1,10 +1,12 @@
 import { UserServices } from './user.service';
 import { Request, Response } from 'express';
+import { orderValidationSchema, userValidationSchema } from './user.validation';
 
 const createUser = async (req: Request, res: Response) => {
   try {
-    const { user: userData } = req.body;
-    const result = await UserServices.createUserIntoDB(userData);
+    const user = req.body;
+    const zodValidateUser = userValidationSchema.parse(user);
+    const result = await UserServices.createUserIntoDB(zodValidateUser);
 
     res.status(200).json({
       success: true,
@@ -69,8 +71,8 @@ const getSingleUser = async (req: Request, res: Response) => {
 const updateUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const { user: userData } = req.body;
-    const result = await UserServices.updateUserInfo(Number(userId), userData);
+    const user = req.body;
+    const result = await UserServices.updateUserInfo(Number(userId), user);
 
     res.status(200).json({
       success: true,
@@ -115,7 +117,8 @@ const addOrders = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const order = req.body;
-    await UserServices.addOrdersToUser(Number(userId), order);
+    const zodValidateOrder = orderValidationSchema.parse(order);
+    await UserServices.addOrdersToUser(Number(userId), zodValidateOrder);
 
     res.status(200).json({
       success: true,
