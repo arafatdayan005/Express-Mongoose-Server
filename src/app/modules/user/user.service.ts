@@ -3,10 +3,12 @@ import { User, Orders } from './user.interface';
 import bcrypt from 'bcrypt';
 
 const createUserIntoDB = async (user: User) => {
+  //hashing password with bcrypt
   const hashedPassword = await bcrypt.hash(user.password, 10);
   const newUser = { ...user, password: hashedPassword };
   const result = await UserModel.create(newUser);
 
+  //when orders are empty
   if (result.orders?.length === 0) {
     const data = {
       userId: result.userId,
@@ -45,6 +47,8 @@ const getAllUsersFromDB = async () => {
 
 const getUserByIDFromDB = async (userId: number) => {
   const existingUser = await UserModel.exists({ userId });
+
+  //check if user exists
   if (!existingUser) {
     throw { code: 404, description: 'User not found!' };
   } else {
@@ -58,10 +62,14 @@ const getUserByIDFromDB = async (userId: number) => {
 
 const updateUserInfo = async (userId: number, user: User) => {
   const existingUser = await UserModel.exists({ userId });
+
+  //check if user exists
   if (!existingUser) {
     throw { code: 404, description: 'User not found!' };
   } else {
     const result = await UserModel.updateOne({ userId }, user);
+
+    //check if user updated successfully send the updated data
     if (result.modifiedCount == 1) {
       const updatedUser = await UserModel.findOne({ userId });
       const data = {
@@ -85,21 +93,42 @@ const deleteUserFromDB = async (userId: number) => {
 };
 
 const addOrdersToUser = async (userId: number, orders: Orders) => {
-  const result = await UserModel.updateOne(
-    { userId },
-    { $push: { orders: orders } },
-  );
-  return result;
+  const existingUser = await UserModel.exists({ userId });
+
+  //check if user exists
+  if (!existingUser) {
+    throw { code: 404, description: 'User not found!' };
+  } else {
+    const result = await UserModel.updateOne(
+      { userId },
+      { $push: { orders: orders } }, //appending the order to the orders array
+    );
+    return result;
+  }
 };
 
 const getOrderByIDFromDB = async (userId: number) => {
-  const result = await UserModel.findOne({ userId }, { orders: 1, _id: 0 });
-  return result;
+  const existingUser = await UserModel.exists({ userId });
+
+  //check if user exists
+  if (!existingUser) {
+    throw { code: 404, description: 'User not found!' };
+  } else {
+    const result = await UserModel.findOne({ userId }, { orders: 1, _id: 0 });
+    return result;
+  }
 };
 
 const getOrderSumByIDFromDB = async (userId: number) => {
-  const result = await UserModel.findOne({ userId }, { orders: 1, _id: 0 });
-  return result;
+  const existingUser = await UserModel.exists({ userId });
+
+  //check if user exists
+  if (!existingUser) {
+    throw { code: 404, description: 'User not found!' };
+  } else {
+    const result = await UserModel.findOne({ userId }, { orders: 1, _id: 0 });
+    return result;
+  }
 };
 
 export const UserServices = {

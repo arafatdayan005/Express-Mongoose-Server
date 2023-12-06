@@ -46,7 +46,7 @@ const userSchema = new Schema<User>({
   userId: {
     type: Number,
     required: [true, 'User ID is Required'],
-    unique: true
+    unique: true,
   },
   username: {
     type: String,
@@ -60,6 +60,7 @@ const userSchema = new Schema<User>({
   fullName: {
     type: fullNameSchema,
     required: true,
+    _id: false,
   },
   age: {
     type: Number,
@@ -82,8 +83,9 @@ const userSchema = new Schema<User>({
   address: {
     type: addressSchema,
     required: true,
+    _id: false,
   },
-  orders: [{ type: orderSchema }],
+  orders: [{ type: orderSchema, _id: false }],
 });
 
 export const UserModel = model<User>('User', userSchema);
